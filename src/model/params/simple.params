@@ -20,10 +20,10 @@ eval =					ec.simple.SimpleEvaluator
 stat =					ec.simple.SimpleStatistics
 
 #	Jobs
-jobs = 1
+jobs = 10
 
 #	Run for 300 generations, not quit prematurely if I find something ideal
-generations =				50
+generations =				250
 quit-on-run-complete =			false
 
 
@@ -50,7 +50,7 @@ pop.subpop.0.duplicate-retries =	1
 # By default elitism isn't done.  If you want to do elitism for, say,
 # the top 10 individuals in subpopulation 0, you'd say:
 #breed.elite.0 = 			10
-breed.elite.0 = 			10
+breed.elite.0 = 			1
 
 # ec.SimpleStatistics
 # output statistics to the file "out.stat" in the directory

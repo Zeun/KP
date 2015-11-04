@@ -63,3 +63,5 @@ out/
 
 .data/
 .out/
+BestIndividual.dot
+*.out

@@ -26,7 +26,8 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 	public static int elites;
 	public static final double IND_MAX_REL_ERR = 0.01;
 	public static final double IND_MAX_NODES = 15.0;
-	
+	public static int JOBS;
+	// Numero de generaciones: state.numGenerations
 	ArrayList<KPData> data;
 	
 	@Override
@@ -43,16 +44,17 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 		if (!(input instanceof KPData)){
 			state.output.fatal("Obteniendo instancias de prueba desde archivo");
 		}
-		
-		elites =  state.parameters.getInt(new ec.util.Parameter("breed.elite.0"),null);	
-		semillas =  state.parameters.getString(new ec.util.Parameter("seed.0"),null);
+		JOBS =  state.parameters.getInt(new ec.util.Parameter("jobs"), null);	
+		elites =  state.parameters.getInt(new ec.util.Parameter("breed.elite.0"), null);	
+		semillas =  state.parameters.getString(new ec.util.Parameter("seed.0"), null);
 		data = new ArrayList<KPData>();
 		
 		try {
 			LOG_FILE = FileIO.newLog(state.output, "out/KPLog.out");
-			(new File("out/results/evolution" + (JOB_NUMBER))).mkdirs();
-			RESULTS_FILE = FileIO.newLog(state.output, "out/results/evolution" + (JOB_NUMBER) + "/KPResults.out");
-			DOT_FILE = FileIO.newLog(state.output, "out/results/evolution" + (JOB_NUMBER) + "/job." + (JOB_NUMBER) + ".BestIndividual.dot");
+			(new File("out/results/evolution" + JOB_NUMBER)).mkdirs();
+			RESULTS_FILE = FileIO.newLog(state.output, "out/results/evolution" + JOB_NUMBER + "/KPResults.out");
+			// DOT_FILE = FileIO.newLog(state.output, "out/results/evolution" + JOB_NUMBER + "/job." + JOB_NUMBER + ".BestIndividual.dot");
+			DOT_FILE = FileIO.newLog(state.output, "out/results/evolution" + JOB_NUMBER + "/BestIndividual.dot");
 			//System.out.println("Archivo de salida: " + DOT_FILE);
 			final File folder = new File("data/evaluacion");
 			
@@ -103,7 +105,7 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 				
 				auxData = data.get(i).clone();	//nuevo data (vaciar mochila)	
 				//System.out.println(auxData.instance.beneficioTotal() + " /");
-				//gpind.trees[0].printStyle = GPTree.PRINT_STYLE_DOT;	//escribir individuos en formato dot				
+				gpind.trees[0].printStyle = GPTree.PRINT_STYLE_DOT;	//escribir individuos en formato dot				
 				long timeInit, timeEnd;
 				timeInit = System.nanoTime();	//inicio cronometro
 				gpind.trees[0].child.eval(state, threadnum, auxData, stack, gpind, this);	//evaluar el individuo gpind para la instancia i
@@ -129,7 +131,7 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 				if (instanceRelErr < IND_MAX_REL_ERR && wRelErr == 0.0) {
 					hits++;
 				}
-				//System.out.println(auxData.get(i).getInstance().printResult());
+				//System.out.println(auxData.getInstance().printResult());
 				
 				//*log result*/
 				// KPResults.out
@@ -165,10 +167,10 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 			state.output.println(" Error relativo del profit = " + profitResult, LOG_FILE);
 			KozaFitness f = ((KozaFitness) gpind.fitness);
 			
-			float fitness = (float)(profitResult);//*ALFA + BETA*nodesResult);
+			float fitness = (float)(profitResult*ALFA + BETA*nodesResult);
 			f.setStandardizedFitness(state, fitness);
 			f.hits = hits;
-			//gpind.evaluated = true;
+			gpind.evaluated = true;
 		}
 	}
 	
@@ -184,29 +186,32 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 		PrintWriter dataOutput = null;
 		Charset charset = Charset.forName("UTF-8");
 		try {			
-			dataOutput = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream("out/results/job."+JOB_NUMBER+".BestIndividual.in"), charset)));
+			dataOutput = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream("out/results/job." + JOB_NUMBER + ".BestIndividual.in"), charset)));
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		// ACÁ IMPRIMO AL INDIVIDUO EN EL .IN
 		dataOutput.println(Population.NUM_SUBPOPS_PREAMBLE + Code.encode(1));
 		dataOutput.println(Population.SUBPOP_INDEX_PREAMBLE + Code.encode(0));
 		dataOutput.println(Subpopulation.NUM_INDIVIDUALS_PREAMBLE + Code.encode(1));
-		dataOutput.println(Subpopulation.INDIVIDUAL_INDEX_PREAMBLE + Code.encode(0));
-		
-		individual.evaluated = false;
+		dataOutput.println(Subpopulation.INDIVIDUAL_INDEX_PREAMBLE + Code.encode(0));		
+		//individual.evaluated = false;
 		((GPIndividual)individual).printIndividual(state, dataOutput);
 		dataOutput.close();
 
+		
 		GPIndividual gpind = (GPIndividual) individual;
 		gpind.trees[0].printStyle = GPTree.PRINT_STYLE_DOT;
+		System.out.println("PRINTSTYLE: " + gpind.trees[0].printStyle);
 		String indid = gpind.toString().substring(19);
-		System.out.println("dotfile" + DOT_FILE);
+		System.out.println("dotfile: " + DOT_FILE);
 		state.output.println("label=\"Individual=" + indid + " Fitness=" + ((KozaFitness) gpind.fitness).standardizedFitness() + " Hits=" + ((KozaFitness) gpind.fitness).hits + " Size=" + gpind.size() + " Depth=" + gpind.trees[0].child.depth() + "\";", DOT_FILE);
 		gpind.printIndividualForHumans(state, DOT_FILE);
-		
+		System.out.println("estoy imprimiendo a los individuos en .dot " + JOB_NUMBER);
 		try {
-			FileIO.repairDot(JOB_NUMBER);
+			FileIO.repairDot(JOB_NUMBER, JOBS);
 			FileIO.dot_a_png(KProblem.JOB_NUMBER);
 		} catch (Exception e) {
 			e.printStackTrace();

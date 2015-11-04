@@ -2,17 +2,23 @@ package model;
 
 
 import java.io.*;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.*;
 
-import ec.util.Output;
+import javax.print.attribute.standard.NumberOfInterveningJobs;
+
+import ec.util.*;
+//import ec.util.Output;
 
 public class FileIO {
 	public static int newLog(Output output, String filename) throws IOException {
 		//System.out.println(filename);
-		FileWriter fw = new FileWriter(filename, false);
+		//FileWriter fw = new FileWriter(filename, false);
 		//fw.write("");
-	    fw.close();
+		
 		File file = new File(filename);
+		//fw.close();
 		return output.addLog(file, true);
 	}
 	
@@ -63,41 +69,50 @@ public class FileIO {
 		return new Instance(numeroElementos, capacidadMochila, beneficioOptimo, listaDisponibles, listaIngresados);
 	}
 	
-	public static void repairDot(int JOB_NUMBER) throws IOException {
-		File file = new File("out/results/evolution"+JOB_NUMBER+"/job." + (JOB_NUMBER) + ".BestIndividual.dot");
+	public static void repairDot(int JOB_NUMBER, int JOBS) throws IOException {
+		File file;
+		int jobs = JOBS;
+		if (jobs == 1) {
+			file = new File("out/results/evolution" + JOB_NUMBER + "/BestIndividual.dot");
+		} else {
+			file = new File("out/results/evolution" + JOB_NUMBER + "/job." +  JOB_NUMBER + ".BestIndividual.dot");
+		}
 		Scanner s = new Scanner(file);
 		StringBuilder buffer = new StringBuilder();
 		int i = 1;
 		String label = "";
 		
 		while(s.hasNextLine()) {
-			if(i == 1)
+			if (i == 1) {
 				label = s.nextLine();
-			else if(i > 4) {
+			} else if(i > 4) {
 				buffer.append(s.nextLine() + "\n");
 				if(i == 5)
 					buffer.append(label + "\n");
-			}
-			else
+			} else {
 				s.nextLine();
+			}
 			i++;
 		}
-		
+		//System.out.println("buffer: " + buffer);
 		writeFile(buffer.toString(), "out/results/evolution" + JOB_NUMBER + "/BestIndividual.dot");
 		s.close();
 	}
 	
 	public static void writeFile(String line, String filename) throws IOException {
 		File file = new File(filename);
-		
+		//System.out.println("filename : " + filename);
+		//System.out.println("file name write : " + file);
 		if (!file.exists()) {
 			file.createNewFile();
 		}
 		
 		FileWriter fw = new FileWriter(file.getAbsoluteFile());
+		//System.out.println("file name write : " + file.getAbsoluteFile());
 		BufferedWriter bw = new BufferedWriter(fw);
 		bw.write(line);
 		bw.close();
+		fw.close();
 	}
 	
 	public static void dot_a_png(int job_number) {
@@ -105,14 +120,14 @@ public class FileIO {
 			System.out.println("[dot_a_png]");
 			
 			String dotPath = "C:/Program Files (x86)/Graphviz2.38/bin/dot.exe";
-			String fileInputPath =	"out/results/evolution"+ job_number+"/BestIndividual.dot";
-			String fileOutputPath =	"out/results/evolution"+ job_number+"/job." + job_number + ".BestIndividual.png";
+			String fileInputPath =	"out/results/evolution" + job_number + "/BestIndividual.dot";
+			String fileOutputPath =	"out/results/evolution" + job_number + "/BestIndividual.png";
 //			System.out.println(dotPath);
 //			System.out.println(fileInputPath);
 //			System.out.println(fileOutputPath);
 
 			Runtime rt = Runtime.getRuntime();
-			rt.exec(dotPath+" -Tpng "+fileInputPath+" -o "+fileOutputPath);
+			rt.exec(dotPath + " -Tpng " + fileInputPath + " -o " + fileOutputPath);
 
 		} catch (IOException ioe) {
 			System.out.println (ioe);

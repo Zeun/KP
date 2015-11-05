@@ -24,7 +24,7 @@ jobs = 5
 
 #	Run for 300 generations, not quit prematurely if I find something ideal
 generations =				150
-quit-on-run-complete =			true
+quit-on-run-complete =			false
 
 
 

@@ -386,7 +386,13 @@ public class Instance {
 		// }
 		return beneficioTotal;
 	}
-
+	
+	/**
+	 * Método utilizado para mostrar en pantalla los elementos actualmente
+	 * agregados a la mochila. Además se muestra el beneficio obtenido vs el óptimo y 
+	 * la capacidad de la mochila en el momento vs la capacidad de la mochila total
+	 * @return estado de la mochila
+	 */
 	public String printResult() {
 		ArrayList<Double> arrayList2 = new ArrayList<>();
 		for (ArrayList<Double> arrayList : listaIngresados) {

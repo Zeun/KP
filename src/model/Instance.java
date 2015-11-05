@@ -14,20 +14,17 @@ public class Instance {
 	public Instance(){}
 	
 	public Instance(int numeroElementos,
-			double capacidadMochila,
-			double beneficioOptimo,
-			ArrayList<ArrayList<Double>> listaDisponibles,
-			ArrayList<ArrayList<Double>> listaIngresados
-		){
+					double capacidadMochila,
+					double beneficioOptimo,
+					ArrayList<ArrayList<Double>> listaDisponibles,
+					ArrayList<ArrayList<Double>> listaIngresados) 
+	{
 		
 		this.numeroElementos = numeroElementos;
 		this.capacidadMochila = capacidadMochila;
 		this.beneficioOptimo = beneficioOptimo;
 		this.listaDisponibles = listaDisponibles;
-		this.listaIngresados = new ArrayList<>();
-		
-//		ArrayList<Integer> listaCore = new ArrayList<Integer>();
-//		ArrayList<Integer> listaPesos = new ArrayList<Integer>();			
+		this.listaIngresados = new ArrayList<>();		
 	}
 	
 	@Override
@@ -36,8 +33,14 @@ public class Instance {
 		clone.numeroElementos = this.numeroElementos;
 		clone.capacidadMochila = this.capacidadMochila;
 		clone.beneficioOptimo = this.beneficioOptimo;
-		clone.listaDisponibles = this.listaDisponibles;
-		clone.listaIngresados = this.listaIngresados;
+
+		ArrayList<ArrayList<Double>> listaDisponiblesTemporal = new ArrayList<>();
+		listaDisponiblesTemporal.addAll(listaDisponibles);
+		listaDisponiblesTemporal.addAll(listaIngresados);
+		
+		clone.listaDisponibles = listaDisponiblesTemporal;
+		clone.listaIngresados = new ArrayList<>();
+		
 		/*
 		for (Integer temp : this.LCT) {clone.LCT.add(temp);}
 		for (Integer temp : this.LCA) {clone.LCA.add(temp);}

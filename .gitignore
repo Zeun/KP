@@ -68,3 +68,5 @@ BestIndividual.dot
 *.params
 bin/model/params/simple.params
 src/model/params/simple.params
+src/model/params/simple.params
+bin/model/params/simple.params

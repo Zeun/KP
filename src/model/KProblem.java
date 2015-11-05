@@ -96,42 +96,47 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 			state.output.println("\n---- Iniciando evaluacion ---\nNum de Nodos:" + gpind.size(), LOG_FILE);
 //			for(int i = 0; i < data.size(); i++) {
 //				if(!data.get(i).instance.isNew()){
-//					System.out.println(data.get(i).getInstance().printResult());
+//					System.out.println(data.get(i).printResult());
 //				}
 //			}
-			
-			for(int i = 0; i < data.size(); i++) {
-				KPData auxData = new KPData();
-				
-				auxData = data.get(i).clone();	//nuevo data (vaciar mochila)	
+//			
+			for (int i = 0; i < data.size(); i++) {
+				//KPData auxData = new KPData();
+				Instance auxData = new Instance();
+				//auxData = data.get(i).clone();	//nuevo data (vaciar mochila)
+				auxData = data.get(i).getInstance().clone();
+				 //System.out.println("Disponibles despues clone: " + auxData.getlistaDisponibles().size());
+				 //System.out.println("Ingresados despues clone: " + auxData.getListadoIngresados().size());
 				//System.out.println(auxData.instance.beneficioTotal() + " /");
+				KPData aux = new KPData();
+				aux.instance = auxData;
 				gpind.trees[0].printStyle = GPTree.PRINT_STYLE_DOT;	//escribir individuos en formato dot				
 				long timeInit, timeEnd;
 				timeInit = System.nanoTime();	//inicio cronometro
-				gpind.trees[0].child.eval(state, threadnum, auxData, stack, gpind, this);	//evaluar el individuo gpind para la instancia i
+				gpind.trees[0].child.eval(state, threadnum, aux, stack, gpind, this);	//evaluar el individuo gpind para la instancia i
 				timeEnd = System.nanoTime();	//fin cronometro
 				
 				//Diferencia entre el resultado obtenido y el óptimo
-				err = Math.abs( auxData.getInstance().beneficioTotal() - auxData.getInstance().beneficioOptimo());
+				err = Math.abs( auxData.beneficioTotal() - auxData.beneficioOptimo());
 				//Error relativo entre la diferencia entre el resultado obtenido y el óptimo
-				instanceRelErr = err/(auxData.getInstance().beneficioOptimo());
+				instanceRelErr = err/(auxData.beneficioOptimo());
 				
 				// Error de peso en caso de que me pase (penalizacion)
-				if (auxData.getInstance().costoTotal() > auxData.getInstance().capacidadMochila()) {
-					wRelErr = auxData.getInstance().costoTotal() - auxData.getInstance().capacidadMochila();
-					wRelErr /= auxData.getInstance().capacidadMochila();
-					System.out.println(auxData.getInstance().costoTotal() + " /" + auxData.getInstance().capacidadMochila());
+				if (auxData.costoTotal() > auxData.capacidadMochila()) {
+					wRelErr = auxData.costoTotal() - auxData.capacidadMochila();
+					wRelErr /= auxData.capacidadMochila();
+					System.out.println(auxData.costoTotal() + " /" + auxData.capacidadMochila());
 				} else {
 					wRelErr = 0.0;
 				}
-				//Hits
-//				if(err == 0 && size == 0) {
-//					hits++;
-//				}
+				
 				if (instanceRelErr < IND_MAX_REL_ERR && wRelErr == 0.0) {
+				//if (instanceRelErr == 0 && wRelErr == 0.0) {
 					hits++;
 				}
-				//System.out.println(auxData.getInstance().printResult());
+				//System.out.println(auxData.printResult());
+				// System.out.println("Disponibles despues show: " + auxData.getlistaDisponibles());
+				// System.out.println("Ingresados despues show: " + auxData.getListadoIngresados());
 				
 				//*log result*/
 				// KPResults.out
@@ -139,16 +144,16 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 				state.output.print(state.numGenerations + " ", RESULTS_FILE);
 				state.output.print((timeEnd - timeInit) + " ", RESULTS_FILE);
 				state.output.print(gpind.toString() + " ", RESULTS_FILE);
-				state.output.print(auxData.getInstance().beneficioTotal() + " ", RESULTS_FILE);
-				state.output.print(auxData.getInstance().beneficioOptimo() + " ", RESULTS_FILE);
-				state.output.print(auxData.getInstance().numeroElementos() + " ", RESULTS_FILE);
+				state.output.print(auxData.beneficioTotal() + " ", RESULTS_FILE);
+				state.output.print(auxData.beneficioOptimo() + " ", RESULTS_FILE);
+				state.output.print(auxData.numeroElementos() + " ", RESULTS_FILE);
 				state.output.print(instanceRelErr + " ", RESULTS_FILE);
 				state.output.print((BETA*nodesResult + ALFA*instanceRelErr + " "), RESULTS_FILE);
 				state.output.print(gpind.trees[0].child.depth() + " ", RESULTS_FILE);
 				state.output.print(gpind.size() + " ", RESULTS_FILE);
 				state.output.print(hits + " ", RESULTS_FILE);
 				//state.output.println(nodesResult + " ", RESULTS_FILE);	
-				//state.output.println(auxData.get(i).getInstance().printResult() +" ", RESULTS_FILE);	
+				//state.output.println(auxData.get(i).printResult() +" ", RESULTS_FILE);	
 
 				
 				relErrAcum += instanceRelErr;
@@ -161,7 +166,16 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 			
 			state.output.println("---- Evaluacion terminada ----", LOG_FILE);
 			
+			
+			/*
+			 * Funciones objetivo 
+			 */
+			// Funcion objetivo tradicional con el error relativo
 			double profitResult = relErrAcum / data.size();
+			
+			// Funcion objetivo considerando el numero de hits
+			// double profitResult = Math.abs(hits-data.size())/(double)data.size();
+			
 			//System.out.println("El resultado del profit esta generación es: " + profitResult + " para el ind: " + gpind.trees.hashCode());
 			state.output.println(" Error relativo de la cantidad de nodos = " + nodesResult, LOG_FILE);
 			state.output.println(" Error relativo del profit = " + profitResult, LOG_FILE);
@@ -170,7 +184,13 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 			float fitness = (float)(profitResult*ALFA + BETA*nodesResult);
 			f.setStandardizedFitness(state, fitness);
 			f.hits = hits;
-			gpind.evaluated = true;
+			if (state.numGenerations == 1 && subpopulation == 0) {
+				System.out.println("Instancia evaluada...");
+				gpind.evaluated = false;
+			} else {
+				gpind.evaluated = true;
+			}
+			
 		}
 	}
 	
@@ -204,12 +224,12 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 		
 		GPIndividual gpind = (GPIndividual) individual;
 		gpind.trees[0].printStyle = GPTree.PRINT_STYLE_DOT;
-		System.out.println("PRINTSTYLE: " + gpind.trees[0].printStyle);
+		// System.out.println("PRINTSTYLE: " + gpind.trees[0].printStyle);
 		String indid = gpind.toString().substring(19);
-		System.out.println("dotfile: " + DOT_FILE);
+		// System.out.println("dotfile: " + DOT_FILE);
 		state.output.println("label=\"Individual=" + indid + " Fitness=" + ((KozaFitness) gpind.fitness).standardizedFitness() + " Hits=" + ((KozaFitness) gpind.fitness).hits + " Size=" + gpind.size() + " Depth=" + gpind.trees[0].child.depth() + "\";", DOT_FILE);
 		gpind.printIndividualForHumans(state, DOT_FILE);
-		System.out.println("estoy imprimiendo a los individuos en .dot " + JOB_NUMBER);
+		System.out.println("estoy imprimiendo a los individuos en .dot del job: " + JOB_NUMBER);
 		try {
 			FileIO.repairDot(JOB_NUMBER, JOBS);
 			FileIO.dot_a_png(KProblem.JOB_NUMBER);

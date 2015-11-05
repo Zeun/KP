@@ -65,3 +65,4 @@ out/
 .out/
 BestIndividual.dot
 *.out
+*.params

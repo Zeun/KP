@@ -1,4 +1,5 @@
 parent.0 = ec.params
+pop.default-subpop = 0
 
 # ec.Evolve
 # simple generational evolution
@@ -20,10 +21,10 @@ eval =					ec.simple.SimpleEvaluator
 stat =					ec.simple.SimpleStatistics
 
 #	Jobs
-jobs = 5
+jobs = 2
 
 #	Run for 300 generations, not quit prematurely if I find something ideal
-generations =				150
+generations =				50
 quit-on-run-complete =			false
 
 
@@ -34,14 +35,14 @@ pop = 					ec.Population
 
 # ec.Population
 # No multiple populations
-pop.subpops =				1
+pop.subpops =				4
 pop.subpop.0 = 				ec.Subpopulation
 
 
 # ec.Subpopulation
 
 # subpop size is 500 individuals
-pop.subpop.0.size =			500
+pop.subpop.0.size =			100
 # don't bother trying to eliminate duplicates from the
 # initial population
 pop.subpop.0.duplicate-retries =	0

@@ -80,9 +80,9 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 			final File folder_island2 = new File("data/evaluacion_island2");
 			
 			FileIO.readInstances(data_island1, folder_island1);
-			FileIO.readInstances(data_island2, folder_island2);
+//			FileIO.readInstances(data_island2, folder_island2);
 			data.add(data_island1);
-			data.add(data_island2);
+//			data.add(data_island2);
 			
 			System.out.println("Lectura desde archivo terminada con Exito!");
 		} catch (Exception e) {
@@ -106,7 +106,7 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 			
 			GPIndividual gpind = (GPIndividual) individual;
 			
-			state.output.println("\n\nGeneracion:" + state.generation + "\nSOProblem: evaluando el individuo [" + gpind.toString() + "]\n", LOG_FILE);
+			state.output.println("Generacion: " + state.generation + "\nSubpopulation: " + subpopulation + "\nKProblem: evaluando el individuo [" + gpind.toString() + "]\n", LOG_FILE);
 			gpind.printIndividualForHumans(state, LOG_FILE);
 			
 			int hits = 0;
@@ -127,7 +127,7 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 			for (int i = 0; i < data_island1.size(); i++) {
 				//KPData auxData = new KPData();
 				Instance auxData = new Instance();
-				// System.out.println(subpopulation%2 + " subpop " + subpopulation);
+				//System.out.println(subpopulation%2 + " subpop " + subpopulation);
 				auxData = data.get(subpopulation%2).get(i).getInstance().clone();
 				// System.out.println(auxData.instance.beneficioTotal() + " /");
 				KPData aux = new KPData();
@@ -152,7 +152,7 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 					wRelErr = 0.0;
 				}
 				
-				if (instanceRelErr < IND_MAX_REL_ERR && wRelErr == 0.0) {
+				if (instanceRelErr <= IND_MAX_REL_ERR && wRelErr == 0.0) {
 				//if (instanceRelErr == 0 && wRelErr == 0.0) {
 					hits++;
 				}
@@ -172,7 +172,7 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 				state.output.print((BETA*nodesResult + ALFA*instanceRelErr + ", "), RESULTS_FILE);
 				state.output.print(hits + ", ", RESULTS_FILE);
 				state.output.print(gpind.trees[0].child.depth() + ", ", RESULTS_FILE);
-				state.output.println(gpind.size() + ", ", RESULTS_FILE);
+				state.output.println(gpind.size() + " ", RESULTS_FILE);
 				
 				//state.output.println(nodesResult + " ", RESULTS_FILE);	
 				//state.output.println(auxData.get(i).printResult() +" ", RESULTS_FILE);	
@@ -180,7 +180,7 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 				
 				relErrAcum += instanceRelErr;
 				// relErrAcum += wRelErr;
-				state.output.print("Time: [init= " + timeInit + "], [end= " + timeEnd + "], [dif= " + (timeEnd - timeInit) + "]", LOG_FILE);
+				// state.output.print("Time: [init= " + timeInit + "], [end= " + timeEnd + "], [dif= " + (timeEnd - timeInit) + "]", LOG_FILE);
 			}
 			
 			Runtime garbage = Runtime.getRuntime();
@@ -194,45 +194,50 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 			 */
 			double profitResult;
 			// Las primeras 2 islas se evaluan con f1 y f2  
+			/*
 			if (subpopulation < 2){
 				// Si la isla es par, funcion obj con hit
 				if (subpopulation % 2 == 0){
 					// Funcion objetivo considerando el numero de hits
 					profitResult = Math.abs(hits-data.get(subpopulation%2).size())/(double)data.get(subpopulation%2).size();
+					state.output.println("Fitness Hits ", LOG_FILE);
 				} else { // Si la isla es par, funcion obj con err relativo
 					// Funcion objetivo tradicional con el error relativo
 					profitResult = relErrAcum / data.get(subpopulation%2).size();
+					state.output.println("Fitness error relativo ", LOG_FILE);
 				}
 			} else { // Las ultimas 2 islas se evaluan con f2 y f1 
-				// Si la isla es par, funcion obj con hit
+				// Si la isla es impar, funcion obj con hit
 				if (subpopulation % 2 != 0){
 					// Funcion objetivo considerando el numero de hits
 					profitResult = Math.abs(hits-data.get(subpopulation%2).size())/(double)data.get(subpopulation%2).size();
+					state.output.println("Fitness Hits ", LOG_FILE);
 				} else { // Si la isla es par, funcion obj con err relativo
 					// Funcion objetivo tradicional con el error relativo
 					profitResult = relErrAcum / data.get(subpopulation%2).size();
+					state.output.println("Fitness error relativo ", LOG_FILE);
 				}
 			}
-			 
-			
-			
-			
-			
+			*/
+			double hitsResult = Math.abs(hits-data.get(subpopulation%2).size())/(double)data.get(subpopulation%2).size();
+			double errResult = relErrAcum / data.get(subpopulation%2).size();
+			profitResult = hitsResult*BETA + errResult*ALFA;
 			//System.out.println("El resultado del profit esta generación es: " + profitResult + " para el ind: " + gpind.trees.hashCode());
+			state.output.println(" Fitness = " + profitResult, LOG_FILE);
 			state.output.println(" Error relativo de la cantidad de nodos = " + nodesResult, LOG_FILE);
-			state.output.println(" Error relativo del profit = " + profitResult, LOG_FILE);
+			state.output.println(" ===================================== \n", LOG_FILE);
 			KozaFitness f = ((KozaFitness) gpind.fitness);
 			
 			float fitness = (float)(profitResult*ALFA + BETA*nodesResult);
 			f.setStandardizedFitness(state, fitness);
 			f.hits = hits;
-			if (state.numGenerations == 1 && subpopulation == 0) {
-				System.out.println("Instancia evaluada...");
-				gpind.evaluated = false;
-			} else {
-				gpind.evaluated = true;
-			}
-			
+//			if (state.numGenerations == 1 && subpopulation == 0) {
+//				System.out.println("Instancia evaluada...");
+//				gpind.evaluated = false;
+//			} else {
+//				gpind.evaluated = true;
+//			}
+			gpind.evaluated = true;
 		}
 	}
 	
@@ -244,30 +249,34 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 			final int log) {
 		
 		endGenerationTime = System.nanoTime();	//fin cronometro evoluciÃ³n
-		state.output.message("Evolution duration: " + (endGenerationTime - startGenerationTime) / 1000000 + " ms");	//duraciÃ³n evoluciÃ³n en ms
+		String message_time = "Evolution duration: " + (endGenerationTime - startGenerationTime) / 1000000 + " ms";	
+		state.output.message(message_time);
 		PrintWriter dataOutput = null;
 		Charset charset = Charset.forName("UTF-8");
 		try {			
-			dataOutput = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream("out/results/job." + JOB_NUMBER + ".BestIndividual.in"), charset)));
+			dataOutput = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream("out/results/job." + JOB_NUMBER + ".subpop" + subpopulation +".BestIndividual.in"), charset)));
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		// ACÁ IMPRIMO AL INDIVIDUO EN EL .IN
-//		dataOutput.println(Population.NUM_SUBPOPS_PREAMBLE + Code.encode(1));
-//		dataOutput.println(Population.SUBPOP_INDEX_PREAMBLE + Code.encode(0));
-//		dataOutput.println(Subpopulation.NUM_INDIVIDUALS_PREAMBLE + Code.encode(1));
-//		dataOutput.println(Subpopulation.INDIVIDUAL_INDEX_PREAMBLE + Code.encode(0));
-
-		dataOutput.println("Job: " + JOB_NUMBER);
-		dataOutput.println("Isla: " + subpopulation);
-		dataOutput.println("Generacion: " + state.generation);
-		//individual.evaluated = false;
-		((GPIndividual)individual).printIndividual(state, dataOutput);
-		dataOutput.close();
+		dataOutput.println(Population.NUM_SUBPOPS_PREAMBLE + Code.encode(1));
+		dataOutput.println(Population.SUBPOP_INDEX_PREAMBLE + Code.encode(0));
+		dataOutput.println(Subpopulation.NUM_INDIVIDUALS_PREAMBLE + Code.encode(1));
+		dataOutput.println(Subpopulation.INDIVIDUAL_INDEX_PREAMBLE + Code.encode(0));
 
 		
+//		individual.evaluated = false;
+		((GPIndividual)individual).printIndividual(state, dataOutput);
+		
+		dataOutput.println("\nJob: " + JOB_NUMBER);
+		dataOutput.println("Isla: " + subpopulation);
+		dataOutput.println("Generacion: " + state.generation);
+		dataOutput.println(message_time);
+		
+		dataOutput.close();
+
 		GPIndividual gpind = (GPIndividual) individual;
 		gpind.trees[0].printStyle = GPTree.PRINT_STYLE_DOT;
 		// System.out.println("PRINTSTYLE: " + gpind.trees[0].printStyle);

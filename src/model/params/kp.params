@@ -49,5 +49,5 @@ gp.fs.0.func.14.nc = nc2
 
 eval.problem = model.KProblem
 #	Reevaluate individuals even if their evaluated flag has been set
-eval.problem.reevaluate = true
+eval.problem.reevaluate = false
 eval.problem.data = model.KPData

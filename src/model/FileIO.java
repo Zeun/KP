@@ -118,11 +118,6 @@ public class FileIO {
 				label = "";
 			}
 		}
-		// System.out.println("buffer: " + buffer);
-		// writeFile(buffer.toString(), "out/results/evolution" + JOB_NUMBER +
-		// "/BestIndividual.dot");
-		// writeFile(buffer.toString(), "out/results/evolution" + JOB_NUMBER +
-		// "/subpop" + subpopulation + ".BestIndividual.dot");
 		s.close();
 	}
 

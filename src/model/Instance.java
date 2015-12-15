@@ -4,6 +4,7 @@ package model;
 import java.util.ArrayList;
 
 public class Instance {
+	private String nombreInstancia;
 	private int numeroElementos;
 	private double capacidadMochila;
 	private double beneficioOptimo;
@@ -13,13 +14,9 @@ public class Instance {
 	
 	public Instance(){}
 	
-	public Instance(int numeroElementos,
-					double capacidadMochila,
-					double beneficioOptimo,
-					ArrayList<ArrayList<Double>> listaDisponibles,
-					ArrayList<ArrayList<Double>> listaIngresados) 
-	{
-		
+	public Instance(String nombreInstancia, int numeroElementos, double capacidadMochila, double beneficioOptimo,
+			ArrayList<ArrayList<Double>> listaDisponibles, ArrayList<ArrayList<Double>> listaIngresados) {
+		this.nombreInstancia = nombreInstancia;
 		this.numeroElementos = numeroElementos;
 		this.capacidadMochila = capacidadMochila;
 		this.beneficioOptimo = beneficioOptimo;
@@ -30,6 +27,7 @@ public class Instance {
 	@Override
 	public Instance clone(){
 		Instance clone = new Instance();
+		clone.nombreInstancia = this.nombreInstancia;
 		clone.numeroElementos = this.numeroElementos;
 		clone.capacidadMochila = this.capacidadMochila;
 		clone.beneficioOptimo = this.beneficioOptimo;
@@ -431,7 +429,11 @@ public class Instance {
 
 	public ArrayList<ArrayList<Double>> getListadoIngresados() {
 		return listaIngresados;
-	}	
+	}
+	
+	public String nombreInstancia(){
+		return nombreInstancia;
+	}
 	
 }
 

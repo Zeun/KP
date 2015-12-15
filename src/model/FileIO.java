@@ -44,31 +44,20 @@ public class FileIO {
 
 		File file = new File(filename);
 		Scanner archivoEntrada = new Scanner(file);
+		// Nombre instancia
+		String nombreInstancia = file.getName();
+		// Num elementos mochila
 		int numeroElementos = archivoEntrada.nextInt();
+		// Capacidad max de la mochila
 		double capacidadMochila = (double) archivoEntrada.nextInt();
+		// Optimo de la mochila
 		double beneficioOptimo = (double) archivoEntrada.nextInt();
-
-		ArrayList<ArrayList<Double>> listaDisponibles = new ArrayList<>(); // Lista
-																			// de
-																			// elementos
-																			// disponibles
-																			// para
-																			// agregar
-																			// a
-																			// la
-																			// mochila
-																			// (numElemento,
-																			// weight,
-																			// profit)
+		// Lista de elementos disponibles para agregar a la mochila
+		ArrayList<ArrayList<Double>> listaDisponibles = new ArrayList<>();
 		ArrayList<Double> listTemp;
-		ArrayList<ArrayList<Double>> listaIngresados = new ArrayList<>(); // Lista
-																			// de
-																			// elementos
-																			// ingresados
-																			// a
-																			// la
-																			// mochila
-
+		// Lista de elementos ingresados en la mochila
+		ArrayList<ArrayList<Double>> listaIngresados = new ArrayList<>();
+		
 		for (int i = 0; i < numeroElementos; i++) {
 			listTemp = new ArrayList<>();
 			for (int j = 0; j < 3; j++) { // Agregando num, weight, profit
@@ -80,7 +69,7 @@ public class FileIO {
 		}
 
 		archivoEntrada.close();
-		return new Instance(numeroElementos, capacidadMochila, beneficioOptimo, listaDisponibles, listaIngresados);
+		return new Instance(nombreInstancia, numeroElementos, capacidadMochila, beneficioOptimo, listaDisponibles, listaIngresados);
 	}
 
 	public static void repairDot(int JOB_NUMBER, int JOBS, int subpopulation) throws IOException {

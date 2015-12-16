@@ -436,10 +436,9 @@ public class Instance {
 	public ArrayList<ArrayList<Double>> getListadoIngresados() {
 		return listaIngresados;
 	}
-
-	public String getNombreInstancia() {
+	
+	public String nombreInstancia(){
 		return nombreInstancia;
 	}	
-	
 }
 

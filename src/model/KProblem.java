@@ -35,8 +35,8 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 	
 	@Override
 	public KProblem clone() {
-		KProblem mkpp = (KProblem) super.clone();
-		return mkpp;
+		KProblem kp = (KProblem) super.clone();
+		return kp;
 	}
 	
 	@Override
@@ -69,23 +69,21 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 			state.output.print("Óptimo" + ", ", RESULTS_FILE);
 			// state.output.print("N° Elementos" + ", ", RESULTS_FILE);
 			state.output.print("Error relativo" + ", ", RESULTS_FILE);
-			state.output.print("Error relativo tamaño árbol" + ", ", RESULTS_FILE);
 			state.output.print("Hits" + ", ", RESULTS_FILE);
+			state.output.print("Error relativo tamaño árbol" + ", ", RESULTS_FILE);
 			state.output.print("Profundidad árbol" + ", ", RESULTS_FILE);
 			state.output.println("Tamaño árbol" + ", ", RESULTS_FILE);
 			state.output.println("Nombre Instancia", RESULTS_FILE);
+			
 			// DOT_FILE = FileIO.newLog(state.output, "out/results/evolution" + JOB_NUMBER + "/job." + JOB_NUMBER + ".BestIndividual.dot");
 			DOT_FILE = FileIO.newLog(state.output, "out/results/evolution" + JOB_NUMBER + "/BestIndividual.dot");
 			//System.out.println("Archivo de salida: " + DOT_FILE);
-			final File folder_island1;
+			final File folder_island1 = new File("data/evaluacion_island1");
 			// Si tengo más de una población, uso 2 grupos de instancias
 			if (SUBPOPS > 1){
-				folder_island1 = new File("data/evaluacion_island1");
 				final File folder_island2 = new File("data/evaluacion_island2");
 				FileIO.readInstances(data_island2, folder_island2);
 				data.add(data_island2);
-			} else {
-				folder_island1 = new File("data/evaluacion_canonico");
 			}
 			FileIO.readInstances(data_island1, folder_island1);
 			
@@ -125,12 +123,8 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 				nodesResult = Math.abs(IND_MAX_NODES - gpind.size() ) / IND_MAX_NODES;
 			}
 			state.output.println("\n---- Iniciando evaluacion ---\nNum de Nodos:" + gpind.size(), LOG_FILE);
-//			for(int i = 0; i < data.size(); i++) {
-//				if(!data.get(i).instance.isNew()){
-//					System.out.println(data.get(i).printResult());
-//				}
-//			}
-//			// considerar que siempre tendran que tener el mismo numero de elementos las islas
+			
+			// considerar que siempre tendran que tener el mismo numero de elementos las islas
 			for (int i = 0; i < data_island1.size(); i++) {
 				//KPData auxData = new KPData();
 				Instance auxData = new Instance();
@@ -176,12 +170,12 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 				state.output.print(auxData.beneficioOptimo() + ", ", RESULTS_FILE);
 				// state.output.print(auxData.numeroElementos() + ", ", RESULTS_FILE);
 				state.output.print(instanceRelErr + ", ", RESULTS_FILE);
-				state.output.print(nodesResult + ", ", RESULTS_FILE);
 				state.output.print(hits + ", ", RESULTS_FILE);
+				state.output.print(nodesResult + ", ", RESULTS_FILE);
 				state.output.print(gpind.trees[0].child.depth() + ", ", RESULTS_FILE);
 				state.output.print(gpind.size() + ", ", RESULTS_FILE);
-				state.output.println(auxData.getNombreInstancia() + " ", RESULTS_FILE);
-				
+				state.output.println(auxData.nombreInstancia() + " ", RESULTS_FILE);
+			
 				//state.output.println(nodesResult + " ", RESULTS_FILE);	
 				//state.output.println(auxData.get(i).printResult() +" ", RESULTS_FILE);	
 
@@ -202,13 +196,14 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 			 */
 			double profitResult;
 			double hitsResult = Math.abs(hits-data.get(subpopulation%2).size())/(double)data.get(subpopulation%2).size();
-			double errResult = relErrAcum / (double)data.get(subpopulation%2).size();
-
-			if (SUBPOPS > 1) {
-				// Las primeras 2 islas se evaluan con f1 y f2
-				if (subpopulation < 2) {
+			double errResult = relErrAcum / data.get(subpopulation%2).size();
+			
+			// Si tengo más de una población, uso islas... cc uso f obj estándar
+			if (SUBPOPS > 1){
+				// Las primeras 2 islas se evaluan con f1 y f2  
+				if (subpopulation < 2){
 					// Si la isla es par, funcion obj con hit
-					if (subpopulation % 2 == 0) {
+					if (subpopulation % 2 == 0){
 						// Funcion objetivo considerando el numero de hits
 						profitResult = hitsResult;
 						state.output.println("Fitness Hits ", LOG_FILE);
@@ -229,16 +224,13 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 						state.output.println("Fitness error relativo ", LOG_FILE);
 					}
 				}
-
 			} else {
 				/* F. obj. canonica */
 				profitResult = hitsResult * BETA + errResult * ALFA;
-			}
-			
+			}			
 			
 			//System.out.println("El resultado del profit esta generación es: " + profitResult + " para el ind: " + gpind.trees.hashCode());
-			state.output.println(" Fitness = " + profitResult, LOG_FILE);
-			state.output.println(" Error relativo de la cantidad de nodos = " + nodesResult, LOG_FILE);
+			state.output.println("Fitness = " + (ALFA*profitResult + BETA*nodesResult), LOG_FILE);
 			state.output.println(" ===================================== \n", LOG_FILE);
 			KozaFitness f = ((KozaFitness) gpind.fitness);
 			
@@ -267,11 +259,12 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 		state.output.message(message_time);
 		PrintWriter dataOutput = null;
 		Charset charset = Charset.forName("UTF-8");
-		try {
+		try {			
 			dataOutput = new PrintWriter(new BufferedWriter(new OutputStreamWriter(
 					new FileOutputStream(
 							"out/results/job." + JOB_NUMBER + ".subpop" + subpopulation + ".BestIndividual.in"),
 					charset)));
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

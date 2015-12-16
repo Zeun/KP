@@ -13,48 +13,48 @@ init = 					ec.simple.SimpleInitializer
 # We're using the standard (empty) finalization method
 finish = 	        		ec.simple.SimpleFinisher
 # We're using the standard (empty) exchange method
-exch = 					ec.simple.SimpleExchanger
-#exch = ec.exchange.InterPopulationExchange
+#exch = 					ec.simple.SimpleExchanger
+exch = ec.exchange.InterPopulationExchange
 
-#exch.subpop.0.select = ec.select.TournamentSelection
-#exch.subpop.1.select = ec.select.TournamentSelection
-#exch.subpop.2.select = ec.select.TournamentSelection
-#exch.subpop.3.select = ec.select.TournamentSelection
-#exch.subpop.0.select-to-die = ec.select.TournamentSelection
-#exch.subpop.1.select-to-die = ec.select.TournamentSelection
-#exch.subpop.2.select-to-die = ec.select.TournamentSelection
-#exch.subpop.3.select-to-die = ec.select.TournamentSelection
-#exch.subpop.0.select-to-die.pick-worst = true
-#exch.subpop.1.select-to-die.pick-worst = true
-#exch.subpop.2.select-to-die.pick-worst = true
-#exch.subpop.3.select-to-die.pick-worst = true
+exch.subpop.0.select = ec.select.TournamentSelection
+exch.subpop.1.select = ec.select.TournamentSelection
+exch.subpop.2.select = ec.select.TournamentSelection
+exch.subpop.3.select = ec.select.TournamentSelection
+exch.subpop.0.select-to-die = ec.select.TournamentSelection
+exch.subpop.1.select-to-die = ec.select.TournamentSelection
+exch.subpop.2.select-to-die = ec.select.TournamentSelection
+exch.subpop.3.select-to-die = ec.select.TournamentSelection
+exch.subpop.0.select-to-die.pick-worst = true
+exch.subpop.1.select-to-die.pick-worst = true
+exch.subpop.2.select-to-die.pick-worst = true
+exch.subpop.3.select-to-die.pick-worst = true
 
 #The number of emigrants sent at one time by generation #n. If not set, uses the default parameter below.
-#exch.size = 5
+exch.size = 5
 #The generation when subpopulation #n begins sending emigrants. If not set, uses the default parameter below.
-#exch.start = 1
+exch.start = 1
 #The number of generations that subpopulation #n waits between sending emigrants. If not set, uses the default parameter below.
-#exch.mod = 10
+exch.mod = 10
 
 #n.num-dest: The number of destination subpopulations for this subpopulation.
 #subpop.n.dest.m: Subpopulation #n's destination #m is this subpopulation.
-#exch.subpop.0.num-dest = 3
-#exch.subpop.0.dest.0 = 1
-#exch.subpop.0.dest.1= 2
-#exch.subpop.0.dest.2 = 3
-#exch.subpop.1.num-dest = 3
-#exch.subpop.1.dest.0 = 0
-#exch.subpop.1.dest.1= 2
-#exch.subpop.1.dest.2 = 3
-#exch.subpop.2.num-dest = 3
-#exch.subpop.2.dest.0 = 0
-#exch.subpop.2.dest.1= 1
-#exch.subpop.2.dest.2 = 3
-#exch.subpop.3.num-dest = 3
-#exch.subpop.3.dest.0 = 0
-#exch.subpop.3.dest.1= 1
-#exch.subpop.3.dest.2 = 2
-#exch.chatty = false;
+exch.subpop.0.num-dest = 3
+exch.subpop.0.dest.0 = 1
+exch.subpop.0.dest.1= 2
+exch.subpop.0.dest.2 = 3
+exch.subpop.1.num-dest = 3
+exch.subpop.1.dest.0 = 0
+exch.subpop.1.dest.1= 2
+exch.subpop.1.dest.2 = 3
+exch.subpop.2.num-dest = 3
+exch.subpop.2.dest.0 = 0
+exch.subpop.2.dest.1= 1
+exch.subpop.2.dest.2 = 3
+exch.subpop.3.num-dest = 3
+exch.subpop.3.dest.0 = 0
+exch.subpop.3.dest.1= 1
+exch.subpop.3.dest.2 = 2
+exch.chatty = false;
 
 
 # We're using standard breeding -- no cross-population breeding
@@ -79,14 +79,14 @@ pop = 					ec.Population
 
 # ec.Population
 # No multiple populations
-pop.subpops =				1
+pop.subpops =				4
 pop.subpop.0 = 				ec.Subpopulation
 
 
 # ec.Subpopulation
 
 # subpop size is 500 individuals
-pop.subpop.0.size =			240
+pop.subpop.0.size =			60
 # don't bother trying to eliminate duplicates from the
 # initial population
 pop.subpop.0.duplicate-retries =	0

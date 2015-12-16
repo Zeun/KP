@@ -1,11 +1,7 @@
 package model;
 
 import java.io.*;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.*;
-
-import javax.print.attribute.standard.NumberOfInterveningJobs;
 
 import ec.util.*;
 //import ec.util.Output;
@@ -43,6 +39,8 @@ public class FileIO {
 		 */
 
 		File file = new File(filename);
+
+		String nombreInstancia = file.getName();
 		Scanner archivoEntrada = new Scanner(file);
 		int numeroElementos = archivoEntrada.nextInt();
 		double capacidadMochila = (double) archivoEntrada.nextInt();
@@ -80,7 +78,7 @@ public class FileIO {
 		}
 
 		archivoEntrada.close();
-		return new Instance(numeroElementos, capacidadMochila, beneficioOptimo, listaDisponibles, listaIngresados);
+		return new Instance(nombreInstancia ,numeroElementos, capacidadMochila, beneficioOptimo, listaDisponibles, listaIngresados);
 	}
 
 	public static void repairDot(int JOB_NUMBER, int JOBS, int subpopulation) throws IOException {

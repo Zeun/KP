@@ -40,7 +40,6 @@ public class FileIO {
 
 		File file = new File(filename);
 
-		String nombreInstancia = file.getName();
 		Scanner archivoEntrada = new Scanner(file);
 		// Nombre instancia
 		String nombreInstancia = file.getName();

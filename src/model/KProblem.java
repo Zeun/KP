@@ -78,15 +78,18 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 			// DOT_FILE = FileIO.newLog(state.output, "out/results/evolution" + JOB_NUMBER + "/job." + JOB_NUMBER + ".BestIndividual.dot");
 			DOT_FILE = FileIO.newLog(state.output, "out/results/evolution" + JOB_NUMBER + "/BestIndividual.dot");
 			//System.out.println("Archivo de salida: " + DOT_FILE);
-			final File folder_island1 = new File("data/evaluacion_island1");
+			final File folder_island1;
 			// Si tengo más de una población, uso 2 grupos de instancias
 			if (SUBPOPS > 1){
+				folder_island1 = new File("data/evaluacion_island1");
 				final File folder_island2 = new File("data/evaluacion_island2");
 				FileIO.readInstances(data_island2, folder_island2);
 				data.add(data_island2);
+			} else {
+				folder_island1 = new File("data/evaluacion_canonico");
 			}
 			FileIO.readInstances(data_island1, folder_island1);
-			
+
 			data.add(data_island1);
 			
 			System.out.println("Lectura desde archivo terminada con Exito!");
@@ -115,51 +118,61 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 			gpind.printIndividualForHumans(state, LOG_FILE);
 			
 			int hits = 0;
-			double relErrAcum = 0.0;
-			double nodesResult = 0.0;
-			double instanceRelErr, err, wRelErr;
+			double errRelativoAcumulado = 0.0,
+					errorRelativoTamañoArbol = 0.0,
+					errorRelativo,
+					errorRelativoPeso,
+					pobSize = data.get(subpopulation % 2).size();
 			
+			// Si el tamaño del árbol es mayor al permitido se calcula el error relativo de éste
 			if (gpind.size() > IND_MAX_NODES) {
-				nodesResult = Math.abs(IND_MAX_NODES - gpind.size() ) / IND_MAX_NODES;
+				errorRelativoTamañoArbol = Math.abs(IND_MAX_NODES - gpind.size() ) / IND_MAX_NODES;
 			}
 			state.output.println("\n---- Iniciando evaluacion ---\nNum de Nodos:" + gpind.size(), LOG_FILE);
 			
-			// considerar que siempre tendran que tener el mismo numero de elementos las islas
-			for (int i = 0; i < data_island1.size(); i++) {
-				//KPData auxData = new KPData();
+			// El individuo es evaluado en cada una de las instancias
+			for (int i = 0; i < pobSize; i++) {
+				// Carga de datos de la instancia a evaluar
 				Instance auxData = new Instance();
-				//System.out.println(subpopulation%2 + " subpop " + subpopulation);
 				auxData = data.get(subpopulation%2).get(i).getInstance().clone();
-				// System.out.println(auxData.instance.beneficioTotal() + " /");
 				KPData aux = new KPData();
 				aux.instance = auxData;
-				gpind.trees[0].printStyle = GPTree.PRINT_STYLE_DOT;	//escribir individuos en formato dot				
-				long timeInit, timeEnd;
-				timeInit = System.nanoTime();	//inicio cronometro
-				gpind.trees[0].child.eval(state, threadnum, aux, stack, gpind, this);	//evaluar el individuo gpind para la instancia i
-				timeEnd = System.nanoTime();	//fin cronometro
+				// Escribir individuos en formato dot
+				gpind.trees[0].printStyle = GPTree.PRINT_STYLE_DOT;				
 				
-				//Diferencia entre el resultado obtenido y el óptimo
-				err = Math.abs( auxData.beneficioTotal() - auxData.beneficioOptimo());
-				//Error relativo entre la diferencia entre el resultado obtenido y el óptimo
-				instanceRelErr = err/(auxData.beneficioOptimo());
+				// Variables cronómetro
+				long timeInit, timeEnd;
+				timeInit = System.nanoTime();
+				
+				// Evaluar el individuo gpind para la instancia actual
+				gpind.trees[0].child.eval(state, threadnum, aux, stack, gpind, this);	//evaluar el individuo gpind para la instancia i
+				
+				// Fin del tiempo de evaluación
+				timeEnd = System.nanoTime();
+				
+				// Error relativo de la diferencia entre el resultado obtenido y el óptimo
+				errorRelativo = Math.abs( auxData.beneficioTotal() - auxData.beneficioOptimo())/(auxData.beneficioOptimo());
 				
 				// Error de peso en caso de que me pase (penalizacion)
 				if (auxData.costoTotal() > auxData.capacidadMochila()) {
-					wRelErr = auxData.costoTotal() - auxData.capacidadMochila();
-					wRelErr /= auxData.capacidadMochila();
-					System.out.println(auxData.costoTotal() + " /" + auxData.capacidadMochila());
+					errorRelativoPeso = auxData.costoTotal() - auxData.capacidadMochila();
+					errorRelativoPeso /= auxData.capacidadMochila();
 				} else {
-					wRelErr = 0.0;
+					errorRelativoPeso = 0.0;
 				}
 				
-				if (instanceRelErr <= IND_MAX_REL_ERR && wRelErr == 0.0) {
-				//if (instanceRelErr == 0 && wRelErr == 0.0) {
+				// Número de hits (sólo cuentan si es solución factible y tiene
+				// error menor a un porcentaje determinado
+				if (errorRelativo <= IND_MAX_REL_ERR && errorRelativoPeso == 0.0) {
 					hits++;
 				}
 				
-				//*log result*/
-				// KPResults.out
+				// Descomentar para ver circuito en pantalla
+//				if (errorRelativo < 0.2 && errorRelativoPeso == 0.0) {
+//					System.out.println(auxData.printResult());
+//				}
+
+				// Log de resultados por instancia
 				state.output.print(state.generation + ", ", RESULTS_FILE);
 				state.output.print(state.numGenerations + ", ", RESULTS_FILE);
 				state.output.print(subpopulation + ", ", RESULTS_FILE);
@@ -169,20 +182,14 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 				state.output.print(auxData.beneficioTotal() + ", ", RESULTS_FILE);
 				state.output.print(auxData.beneficioOptimo() + ", ", RESULTS_FILE);
 				// state.output.print(auxData.numeroElementos() + ", ", RESULTS_FILE);
-				state.output.print(instanceRelErr + ", ", RESULTS_FILE);
+				state.output.print(errorRelativo + ", ", RESULTS_FILE);
 				state.output.print(hits + ", ", RESULTS_FILE);
-				state.output.print(nodesResult + ", ", RESULTS_FILE);
+				state.output.print(errorRelativoTamañoArbol + ", ", RESULTS_FILE);
 				state.output.print(gpind.trees[0].child.depth() + ", ", RESULTS_FILE);
 				state.output.print(gpind.size() + ", ", RESULTS_FILE);
 				state.output.println(auxData.nombreInstancia() + " ", RESULTS_FILE);
-			
-				//state.output.println(nodesResult + " ", RESULTS_FILE);	
-				//state.output.println(auxData.get(i).printResult() +" ", RESULTS_FILE);	
 
-				
-				relErrAcum += instanceRelErr;
-				// relErrAcum += wRelErr;
-				// state.output.print("Time: [init= " + timeInit + "], [end= " + timeEnd + "], [dif= " + (timeEnd - timeInit) + "]", LOG_FILE);
+				errRelativoAcumulado += errorRelativo;
 			}
 			
 			Runtime garbage = Runtime.getRuntime();
@@ -194,47 +201,51 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 			/*
 			 * Funciones objetivo 
 			 */
-			double profitResult;
-			double hitsResult = Math.abs(hits-data.get(subpopulation%2).size())/(double)data.get(subpopulation%2).size();
-			double errResult = relErrAcum / data.get(subpopulation%2).size();
+			double profitResult,
+				hitsPromedio = Math.abs(hits - pobSize) / pobSize,
+				errRelativoPromedio = errRelativoAcumulado / pobSize;
 			
+			// Función objetivo para cada isla
 			// Si tengo más de una población, uso islas... cc uso f obj estándar
-			if (SUBPOPS > 1){
-				// Las primeras 2 islas se evaluan con f1 y f2  
-				if (subpopulation < 2){
-					// Si la isla es par, funcion obj con hit
-					if (subpopulation % 2 == 0){
-						// Funcion objetivo considerando el numero de hits
-						profitResult = hitsResult;
-						state.output.println("Fitness Hits ", LOG_FILE);
-					} else { // Si la isla es par, funcion obj con err relativo
-						// Funcion objetivo tradicional con el error relativo
-						profitResult = errResult;
-						state.output.println("Fitness error relativo ", LOG_FILE);
+			if (SUBPOPS > 1) {
+				// Las primeras 2 islas se evaluan con fitness 1 y fitness 2
+				// respectivamente
+				if (subpopulation < 2) {
+					if (subpopulation % 2 == 0) {
+						// Función objetivo por número de hits
+						profitResult = hitsPromedio;
+						// state.output.println("Fitness Hits ", LOG_FILE);
+					} else {
+						// Funcion objetivo con el error relativo
+						profitResult = errRelativoPromedio;
+						// state.output.println("Fitness error relativo ",
+						// LOG_FILE);
 					}
-				} else { // Las ultimas 2 islas se evaluan con f2 y f1
-					// Si la isla es impar, funcion obj con hit
+					// Las islas 3 y 4 se evaluan con fitness 2 y fitness 1
+					// respectivamente
+				} else {
 					if (subpopulation % 2 != 0) {
-						// Funcion objetivo considerando el numero de hits
-						profitResult = hitsResult;
-						state.output.println("Fitness Hits ", LOG_FILE);
-					} else { // Si la isla es par, funcion obj con err relativo
-						// Funcion objetivo tradicional con el error relativo
-						profitResult = errResult;
-						state.output.println("Fitness error relativo ", LOG_FILE);
+						// Función objetivo por número de hits
+						profitResult = hitsPromedio;
+						// state.output.println("Fitness Hits ", LOG_FILE);
+					} else {
+						// Funcion objetivo con el error relativo
+						profitResult = errRelativoPromedio;
+						// state.output.println("Fitness error relativo ",
+						// LOG_FILE);
 					}
 				}
 			} else {
-				/* F. obj. canonica */
-				profitResult = hitsResult * BETA + errResult * ALFA;
-			}			
+				// Función objetivo combinada para caso canónico
+				profitResult = ALFA * errRelativoPromedio + BETA * hitsPromedio;
+			}		
 			
 			//System.out.println("El resultado del profit esta generación es: " + profitResult + " para el ind: " + gpind.trees.hashCode());
-			state.output.println("Fitness = " + (ALFA*profitResult + BETA*nodesResult), LOG_FILE);
+			state.output.println("Fitness = " + (ALFA*profitResult + BETA*errorRelativoTamañoArbol), LOG_FILE);
 			state.output.println(" ===================================== \n", LOG_FILE);
 			KozaFitness f = ((KozaFitness) gpind.fitness);
 			
-			float fitness = (float)(profitResult*ALFA + BETA*nodesResult);
+			float fitness = (float)(profitResult*ALFA + BETA*errorRelativoTamañoArbol);
 			f.setStandardizedFitness(state, fitness);
 			f.hits = hits;
 //			if (state.numGenerations == 1 && subpopulation == 0) {
@@ -268,14 +279,11 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		// ACÁ IMPRIMO AL INDIVIDUO EN EL .IN
 		dataOutput.println(Population.NUM_SUBPOPS_PREAMBLE + Code.encode(1));
 		dataOutput.println(Population.SUBPOP_INDEX_PREAMBLE + Code.encode(0));
 		dataOutput.println(Subpopulation.NUM_INDIVIDUALS_PREAMBLE + Code.encode(1));
 		dataOutput.println(Subpopulation.INDIVIDUAL_INDEX_PREAMBLE + Code.encode(0));
 
-		
 //		individual.evaluated = false;
 		((GPIndividual)individual).printIndividual(state, dataOutput);
 		

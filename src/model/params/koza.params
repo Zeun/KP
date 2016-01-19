@@ -30,13 +30,13 @@ pop.subpop.0.species.pipe.generate-max = false
 #	Subsidiary pipelines:
 pop.subpop.0.species.pipe.num-sources = 4
 pop.subpop.0.species.pipe.source.0 = ec.gp.koza.CrossoverPipeline
-pop.subpop.0.species.pipe.source.0.prob = 0.9
+pop.subpop.0.species.pipe.source.0.prob = 0.8
 pop.subpop.0.species.pipe.source.1 = ec.breed.ReproductionPipeline
-pop.subpop.0.species.pipe.source.1.prob = 0.15
+pop.subpop.0.species.pipe.source.1.prob = 0.10
 pop.subpop.0.species.pipe.source.2 = ec.gp.koza.MutationPipeline
-pop.subpop.0.species.pipe.source.2.prob = 0.07
+pop.subpop.0.species.pipe.source.2.prob = 0.05
 pop.subpop.0.species.pipe.source.3 = ec.gp.breed.MutateOneNodePipeline
-pop.subpop.0.species.pipe.source.3.prob = 0.07
+pop.subpop.0.species.pipe.source.3.prob = 0.05
 
 ###	Reproduction parameters
 breed.reproduce.source.0 = ec.select.TournamentSelection

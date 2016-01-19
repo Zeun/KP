@@ -21,8 +21,16 @@ public class KP {
 		return ins.agregarMayorBeneficio();
 	}
 	
+	public static boolean agregarMenorBeneficio (Instance ins) {
+		return ins.agregarMenorBeneficio();
+	}
+	
 	public static boolean agregarMayorGanancia (Instance ins) {
 		return ins.agregarMayorGanancia();
+	}
+	
+	public static boolean agregarMenorGanancia (Instance ins) {
+		return ins.agregarMenorGanancia();
 	}
 	
 	public static boolean eliminarPeorGanancia (Instance ins) {

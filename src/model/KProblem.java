@@ -165,6 +165,7 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 				// error menor a un porcentaje determinado
 				if (errorRelativo <= IND_MAX_REL_ERR && errorRelativoPeso == 0.0) {
 					hits++;
+					// System.out.println(auxData.printResult());
 				}
 				
 				// Descomentar para ver circuito en pantalla
@@ -177,7 +178,7 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 				state.output.print(state.numGenerations + ", ", RESULTS_FILE);
 				state.output.print(subpopulation + ", ", RESULTS_FILE);
 				state.output.print(SUBPOPS + ", ", RESULTS_FILE);
-				state.output.print((timeEnd - timeInit) + ", ", RESULTS_FILE);
+				state.output.print((timeEnd - timeInit) / 1000000 + ", ", RESULTS_FILE);
 				state.output.print(gpind.toString() + ", ", RESULTS_FILE);
 				state.output.print(auxData.beneficioTotal() + ", ", RESULTS_FILE);
 				state.output.print(auxData.beneficioOptimo() + ", ", RESULTS_FILE);
@@ -290,6 +291,8 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 		dataOutput.println("\nJob: " + JOB_NUMBER);
 		dataOutput.println("Isla: " + subpopulation);
 		dataOutput.println("Generacion: " + state.generation);
+		
+		
 		dataOutput.println(message_time);
 		
 		dataOutput.close();

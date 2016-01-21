@@ -3,6 +3,10 @@ package model;
 import java.util.ArrayList;
 
 public class Instance {
+	private static int profit = 1;
+	private static int weight = 2;
+	private static int gain = 3;
+	
 	private String nombreInstancia;
 	private int numeroElementos;
 	private double capacidadMochila;
@@ -70,7 +74,7 @@ public class Instance {
 			return false;
 		} else {
 			if (listaDisponibles.size() == 1) {
-				if (verificarIngreso(listaIngresados, listaDisponibles.get(0).get(1))) {
+				if (verificarIngreso(listaIngresados, listaDisponibles.get(0).get(weight))) {
 					listaIngresados.add(listaDisponibles.get(0));
 					listaDisponibles.remove(0);
 					return true;
@@ -80,18 +84,16 @@ public class Instance {
 			}
 
 			int posicion = 0;
-			double costo = listaDisponibles.get(posicion).get(1);
+			double costo = listaDisponibles.get(posicion).get(weight);
 
-			/* Se busca el elemento con mayor coste */
+			// Se busca el elemento con mayor coste
 			for (int i = 0; i < listaDisponibles.size(); i++) {
-				if (listaDisponibles.get(i).get(1) > costo) {
+				if (listaDisponibles.get(i).get(weight) > costo) {
 					posicion = i;
-					costo = listaDisponibles.get(i).get(1);
+					costo = listaDisponibles.get(i).get(weight);
 				}
 			}
-			// Verifico si no me paso de la capacidad total y lo agrego, CC
-			// false
-			if (verificarIngreso(listaIngresados, listaDisponibles.get(posicion).get(1))) {
+			if (verificarIngreso(listaIngresados, listaDisponibles.get(posicion).get(weight))) {
 				listaIngresados.add(listaDisponibles.get(posicion));
 				listaDisponibles.remove(posicion);
 				return true;
@@ -111,7 +113,7 @@ public class Instance {
 			return false;
 		} else {
 			if (listaDisponibles.size() == 1) {
-				if (verificarIngreso(listaIngresados, listaDisponibles.get(0).get(1))) {
+				if (verificarIngreso(listaIngresados, listaDisponibles.get(0).get(weight))) {
 					listaIngresados.add(listaDisponibles.get(0));
 					listaDisponibles.remove(0);
 					return true;
@@ -121,18 +123,16 @@ public class Instance {
 			}
 
 			int posicion = 0;
-			double costo = listaDisponibles.get(posicion).get(1);
+			double costo = listaDisponibles.get(posicion).get(weight);
 
-			/* Se busca el elemento con mayor coste */
+			/* Se busca el elemento con menor coste */
 			for (int i = 0; i < listaDisponibles.size(); i++) {
-				if (listaDisponibles.get(i).get(1) < costo) {
+				if (listaDisponibles.get(i).get(weight) < costo) {
 					posicion = i;
-					costo = listaDisponibles.get(i).get(1);
+					costo = listaDisponibles.get(i).get(weight);
 				}
 			}
-			// Verifico si no me paso de la capacidad total y lo agrego, CC
-			// false
-			if (verificarIngreso(listaIngresados, listaDisponibles.get(posicion).get(1))) {
+			if (verificarIngreso(listaIngresados, listaDisponibles.get(posicion).get(weight))) {
 				listaIngresados.add(listaDisponibles.get(posicion));
 				listaDisponibles.remove(posicion);
 				return true;
@@ -151,7 +151,7 @@ public class Instance {
 		if (listaDisponibles.size() == 0) {
 			return false;
 		} else {
-			if (verificarIngreso(listaIngresados, listaDisponibles.get(0).get(1))) {
+			if (verificarIngreso(listaIngresados, listaDisponibles.get(0).get(weight))) {
 				listaIngresados.add(listaDisponibles.get(0));
 				listaDisponibles.remove(0);
 				return true;
@@ -171,7 +171,7 @@ public class Instance {
 			return false;
 		} else {
 			if (listaDisponibles.size() == 1) {
-				if (verificarIngreso(listaIngresados, listaDisponibles.get(0).get(1))) {
+				if (verificarIngreso(listaIngresados, listaDisponibles.get(0).get(weight))) {
 					listaIngresados.add(listaDisponibles.get(0));
 					listaDisponibles.remove(0);
 					return true;
@@ -180,18 +180,16 @@ public class Instance {
 				}
 			}
 			int posicion = 0;
-			double beneficio = listaDisponibles.get(posicion).get(2);
+			double beneficio = listaDisponibles.get(posicion).get(profit);
 
 			// Se busca el elemento con mayor beneficio
 			for (int i = 0; i < listaDisponibles.size(); i++) {
-				if (listaDisponibles.get(i).get(2) > beneficio) {
+				if (listaDisponibles.get(i).get(profit) > beneficio) {
 					posicion = i;
-					beneficio = listaDisponibles.get(i).get(2);
+					beneficio = listaDisponibles.get(i).get(profit);
 				}
 			}
-			// Verifico si no me paso de la capacidad total y lo agrego, CC
-			// false
-			if (verificarIngreso(listaIngresados, listaDisponibles.get(posicion).get(1))) {
+			if (verificarIngreso(listaIngresados, listaDisponibles.get(posicion).get(weight))) {
 				listaIngresados.add(listaDisponibles.get(posicion));
 				listaDisponibles.remove(posicion);
 				return true;
@@ -212,7 +210,7 @@ public class Instance {
 			return false;
 		} else {
 			if (listaDisponibles.size() == 1) {
-				if (verificarIngreso(listaIngresados, listaDisponibles.get(0).get(1))) {
+				if (verificarIngreso(listaIngresados, listaDisponibles.get(0).get(weight))) {
 					listaIngresados.add(listaDisponibles.get(0));
 					listaDisponibles.remove(0);
 					return true;
@@ -221,18 +219,16 @@ public class Instance {
 				}
 			}
 			int posicion = 0;
-			double beneficio = listaDisponibles.get(posicion).get(2);
+			double beneficio = listaDisponibles.get(posicion).get(profit);
 
 			// Se busca el elemento con menor beneficio
 			for (int i = 0; i < listaDisponibles.size(); i++) {
-				if (listaDisponibles.get(i).get(2) < beneficio) {
+				if (listaDisponibles.get(i).get(profit) < beneficio) {
 					posicion = i;
-					beneficio = listaDisponibles.get(i).get(2);
+					beneficio = listaDisponibles.get(i).get(profit);
 				}
 			}
-			// Verifico si no me paso de la capacidad total y lo agrego, CC
-			// false
-			if (verificarIngreso(listaIngresados, listaDisponibles.get(posicion).get(1))) {
+			if (verificarIngreso(listaIngresados, listaDisponibles.get(posicion).get(weight))) {
 				listaIngresados.add(listaDisponibles.get(posicion));
 				listaDisponibles.remove(posicion);
 				return true;
@@ -253,7 +249,7 @@ public class Instance {
 		} else {
 			// ganancia = beneficio/peso
 			if (listaDisponibles.size() == 1) {
-				if (verificarIngreso(listaIngresados, listaDisponibles.get(0).get(1))) {
+				if (verificarIngreso(listaIngresados, listaDisponibles.get(0).get(weight))) {
 					listaIngresados.add(listaDisponibles.get(0));
 					listaDisponibles.remove(0);
 					return true;
@@ -261,19 +257,15 @@ public class Instance {
 					return false;
 				}
 			}
-
 			int posicion = 0;
-			double ganancia = listaDisponibles.get(posicion).get(3);
-
+			double ganancia = listaDisponibles.get(posicion).get(gain);
 			for (int i = 0; i < listaDisponibles.size(); i++) {
-				if (listaDisponibles.get(i).get(3) > ganancia) {
+				if (listaDisponibles.get(i).get(gain) > ganancia) {
 					posicion = i;
-					ganancia = listaDisponibles.get(i).get(3);
+					ganancia = listaDisponibles.get(i).get(gain);
 				}
 			}
-			// Verifico si no me paso de la capacidad total y lo agrego, CC
-			// false
-			if (verificarIngreso(listaIngresados, listaDisponibles.get(posicion).get(1))) {
+			if (verificarIngreso(listaIngresados, listaDisponibles.get(posicion).get(weight))) {
 				listaIngresados.add(listaDisponibles.get(posicion));
 				listaDisponibles.remove(posicion);
 				return true;
@@ -294,7 +286,7 @@ public class Instance {
 		} else {
 			// ganancia = beneficio/peso
 			if (listaDisponibles.size() == 1) {
-				if (verificarIngreso(listaIngresados, listaDisponibles.get(0).get(1))) {
+				if (verificarIngreso(listaIngresados, listaDisponibles.get(0).get(weight))) {
 					listaIngresados.add(listaDisponibles.get(0));
 					listaDisponibles.remove(0);
 					return true;
@@ -302,19 +294,16 @@ public class Instance {
 					return false;
 				}
 			}
-
 			int posicion = 0;
-			double ganancia = listaDisponibles.get(posicion).get(3);
+			double ganancia = listaDisponibles.get(posicion).get(gain);
 
 			for (int i = 0; i < listaDisponibles.size(); i++) {
-				if (listaDisponibles.get(i).get(3) < ganancia) {
+				if (listaDisponibles.get(i).get(gain) < ganancia) {
 					posicion = i;
-					ganancia = listaDisponibles.get(i).get(3);
+					ganancia = listaDisponibles.get(i).get(gain);
 				}
 			}
-			// Verifico si no me paso de la capacidad total y lo agrego, CC
-			// false
-			if (verificarIngreso(listaIngresados, listaDisponibles.get(posicion).get(1))) {
+			if (verificarIngreso(listaIngresados, listaDisponibles.get(posicion).get(weight))) {
 				listaIngresados.add(listaDisponibles.get(posicion));
 				listaDisponibles.remove(posicion);
 				return true;
@@ -339,17 +328,12 @@ public class Instance {
 				listaIngresados.remove(0);
 				return true;
 			}
-
 			int posicion = 0;
-			double peso = listaIngresados.get(posicion).get(1);
-
-			/*
-			 * Se busca el elemento con peor PESO entre los que ya han ingresado
-			 */
+			double peso = listaIngresados.get(posicion).get(weight);
 			for (int i = 0; i < listaIngresados.size(); i++) {
-				if (listaIngresados.get(i).get(1) > peso) {
+				if (listaIngresados.get(i).get(weight) > peso) {
 					posicion = i;
-					peso = listaIngresados.get(i).get(1);
+					peso = listaIngresados.get(i).get(weight);
 				}
 			}
 			// Elimino el elemento con mayor peso
@@ -374,18 +358,12 @@ public class Instance {
 				listaIngresados.remove(0);
 				return true;
 			}
-
 			int posicion = 0;
-			double beneficio = listaIngresados.get(posicion).get(2);
-
-			/*
-			 * Se busca el elemento con menor beneficio entre los que ya han
-			 * ingresado
-			 */
+			double beneficio = listaIngresados.get(posicion).get(profit);
 			for (int i = 0; i < listaIngresados.size(); i++) {
-				if (listaIngresados.get(i).get(2) < beneficio) {
+				if (listaIngresados.get(i).get(profit) < beneficio) {
 					posicion = i;
-					beneficio = listaIngresados.get(i).get(2);
+					beneficio = listaIngresados.get(i).get(profit);
 				}
 			}
 			// Elimino el elemento con menor beneficio
@@ -410,18 +388,12 @@ public class Instance {
 				listaIngresados.remove(0);
 				return true;
 			}
-
 			int posicion = 0;
-			double ganancia = listaIngresados.get(posicion).get(3);
-
-			/*
-			 * Se busca el elemento con peor ganancia (beneficio/peso) entre los
-			 * que ya han ingresado
-			 */
+			double ganancia = listaIngresados.get(posicion).get(gain);
 			for (int i = 0; i < listaIngresados.size(); i++) {
-				if (listaIngresados.get(i).get(3) < ganancia) {
+				if (listaIngresados.get(i).get(gain) < ganancia) {
 					posicion = i;
-					ganancia = listaIngresados.get(i).get(3);
+					ganancia = listaIngresados.get(i).get(gain);
 				}
 			}
 			// Elimino el elemento con mayor ganancia
@@ -467,7 +439,7 @@ public class Instance {
 		if (listaIngresados.size() != 0) {
 			ArrayList<ArrayList<Double>> listaIngresadosTemporal = new ArrayList<>(listaIngresados);
 			for (int i = 0; i < listaIngresadosTemporal.size(); i++) {
-				costoTotal += listaIngresadosTemporal.get(i).get(1);
+				costoTotal += listaIngresadosTemporal.get(i).get(weight);
 			}
 		}
 		costoTotal += costoAIngresar;
@@ -488,12 +460,9 @@ public class Instance {
 		double costoTotal = 0.0;
 		if (listaIngresados.size() > 0) {
 			for (int i = 0; i < listaIngresados.size(); i++) {
-				costoTotal += listaIngresados.get(i).get(1);
+				costoTotal += listaIngresados.get(i).get(weight);
 			}
 		}
-		// else {
-		// costoTotal = 400000000.0;
-		// }
 		return costoTotal;
 	}
 
@@ -506,17 +475,14 @@ public class Instance {
 		double beneficioTotal = 0.0;
 		if (listaIngresados.size() > 0) {
 			for (int i = 0; i < listaIngresados.size(); i++) {
-				beneficioTotal += listaIngresados.get(i).get(2);
+				beneficioTotal += listaIngresados.get(i).get(profit);
 			}
 		}
-		// else {
-		// beneficioTotal = -400000000.0;
-		// }
 		return beneficioTotal;
 	}
 
 	/**
-	 * Método utilizado para mostrar en pantalla los elementos actualmente
+	 * Se muestra en pantalla los elementos actualmente
 	 * agregados a la mochila. Además se muestra el beneficio obtenido vs el
 	 * óptimo y la capacidad de la mochila en el momento vs la capacidad de la
 	 * mochila total

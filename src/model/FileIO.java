@@ -33,9 +33,12 @@ public class FileIO {
 	private static Instance readFile(String filename) throws IOException {
 		/*
 		 * Considerando que el formato de los archivos de entrada es el
-		 * siguiente numeroElementos capacidadMochila numElemento1
-		 * costoElemento1 beneficioElemento1 numElemento2 costoElemento2
-		 * beneficioElemento2 ... numElementoN costoElementoN beneficioElementoN
+		 * siguiente:
+		 * numeroElementos capacidadMochila beneficioOptimo
+		 * numElemento1	costoElemento1 beneficioElemento1 
+		 * numElemento2 costoElemento2 beneficioElemento2
+		 * ...
+		 * numElementoN costoElementoN beneficioElementoN
 		 */
 
 		File file = new File(filename);
@@ -57,10 +60,10 @@ public class FileIO {
 		
 		for (int i = 0; i < numeroElementos; i++) {
 			listTemp = new ArrayList<>();
-			for (int j = 0; j < 3; j++) { // Agregando num, weight, profit
+			for (int j = 0; j < 3; j++) { // Agregando num, profit, weight
 				listTemp.add((double) archivoEntrada.nextInt());
 			}
-			listTemp.add(listTemp.get(2) / (double) listTemp.get(1)); // Agregando
+			listTemp.add(listTemp.get(1) / (double) listTemp.get(2)); // Agregando
 																		// profit/weight
 			listaDisponibles.add(listTemp);
 		}

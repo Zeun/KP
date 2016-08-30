@@ -52,5 +52,9 @@ public class KP {
 	public static boolean isTrue (Instance ins) {
 		return ins.isTrue();
 	}
+	
+	public static boolean terminalMejora (Instance ins) {
+		return ins.terminalMejora();
+	}
 
 }

@@ -3,6 +3,7 @@ package model;
 import java.util.ArrayList;
 
 public class Instance {
+	private static int correlative = 0;
 	private static int profit = 1;
 	private static int weight = 2;
 	private static int gain = 3;
@@ -421,9 +422,102 @@ public class Instance {
 	public boolean isTrue() {
 		return true;
 	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public boolean terminalMejora() {
+		int items = 5;
+		if (listaIngresados.size() == 0 || listaDisponibles.size() == 0) {
+			return false;
+		} else {
+			if (listaIngresados.size() <= items) {
+				return false;
+			}
+			int posicion = 0, tamano_in = listaIngresados.size(), tamano_out;
+			
+			ArrayList<ArrayList<Double>> listaTemporal = new ArrayList<>();
+
+			double ganancia = listaDisponibles.get(posicion).get(gain);
+			
+			if (listaDisponibles.size() < items) {
+				tamano_out = listaDisponibles.size();
+			} else {
+				tamano_out = items;
+			}
+			for (int j = 0; j < tamano_out; j++) {
+				for (int i = 0; i < listaDisponibles.size(); i++) {
+					if (listaDisponibles.get(i).get(profit) > ganancia) {
+						posicion = i;
+						ganancia = listaDisponibles.get(i).get(gain);
+					}
+				}
+				listaTemporal.add(listaDisponibles.get(posicion));
+				listaDisponibles.remove(posicion);
+				posicion = -1;
+				ganancia = -1;
+			}
+			
+			if (listaIngresados.size() < items) {
+                tamano_in = listaIngresados.size();
+            } else {
+                tamano_in = items;
+            }
+            for (int j = 0; j < tamano_in; j++) {
+            	listaDisponibles.add(listaIngresados.get(listaIngresados.size()-1));
+                listaTemporal.add(listaIngresados.get(listaIngresados.size()-1));
+                listaIngresados.remove(listaIngresados.size()-1);
+            }
+			
+            double costoTemporal = costoTotal();
+            int itemNumber = listaTemporal.size();
+            int capacidadRestante = (int) (capacidadMochila() - costoTemporal);
+//            ArrayList<ArrayList<Double>> listaTemporalIngreso = new ArrayList<>();
+            
+            int profitStored[][] = new int[itemNumber + 1][capacidadRestante + 1];
+            
+            knapsack(itemNumber, capacidadRestante, listaTemporal, profitStored);
+            
+			return true;
+		}
+	}
 
 	/* Metodos utilizados por los terminales */
-
+	 
+	public void knapsack(int itemNumber, int maxCapacity, ArrayList<ArrayList<Double>> listaTemporalIngreso, int profitStored[][]) {
+		ArrayList<ArrayList<Double>> listaAgregar = new ArrayList<>();;
+		// table for backtracking to get the items chosen
+		int x[][] = new int[itemNumber + 1][maxCapacity + 1];
+		// filling tables
+		for (int i = 1; i <= itemNumber; i++)
+			for (int j = 0; j <= maxCapacity; j++)
+				if ((listaTemporalIngreso.get(i - 1).get(weight) <= j) && (listaTemporalIngreso.get(i - 1).get(profit) + profitStored[i - 1][(int) (j - listaTemporalIngreso.get(i - 1).get(weight))] > profitStored[i - 1][j])) {
+					profitStored[i][j] = (int) (listaTemporalIngreso.get(i - 1).get(profit) + profitStored[i - 1][(int) (j - listaTemporalIngreso.get(i - 1).get(weight))]);
+					x[i][j] = 1;
+				} else {
+					profitStored[i][j] = profitStored[i - 1][j];
+					x[i][j] = 0;
+				}
+		// backtracking
+		// System.out.printf("Items Chosen\n%5s%7s%7s\n", "Item", "Weight", "Profit");
+		int K = maxCapacity;
+		for (int i = itemNumber; i >= 1; i--)
+			if (x[i][K] == 1) {
+				listaIngresados.add(listaTemporalIngreso.get(i - 1));
+				//System.out.printf("%5d%7d%7d\n", i, listaTemporalIngreso.get(i - 1).get(weight), listaTemporalIngreso.get(i - 1).get(profit));
+				for (int j = 0; j < listaDisponibles.size(); j++) {
+					if (listaTemporalIngreso.get(i - 1).get(correlative) == listaDisponibles.get(j).get(correlative)) {
+						listaDisponibles.remove(j);
+						j = listaDisponibles.size();
+					}
+				}
+				K -= listaTemporalIngreso.get(i - 1).get(weight);
+			}
+//		System.out.println("Maximum profit : " + profitStored[itemNumber][maxCapacity]);
+	}
+	
+	
 	/**
 	 * Método que verifica si un elemento puede ser agregado a la mochila.
 	 * 

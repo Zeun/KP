@@ -6,7 +6,7 @@ gp.fs.0 = ec.gp.GPFunctionSet
 gp.fs.0.name = f0
 
 #Terminals
-gp.fs.0.size = 19
+gp.fs.0.size = 20
 
 gp.fs.0.func.0 = terminals.AgregarMasPesado
 gp.fs.0.func.0.nc = nc0
@@ -51,6 +51,10 @@ gp.fs.0.func.17.nc = nc2
 gp.fs.0.func.18 = functions.Equal
 gp.fs.0.func.18.nc = nc2
 
+# Mejora
+
+gp.fs.0.func.19 = terminals.TerminalMejora
+gp.fs.0.func.19.nc = nc0
 
 eval.problem = model.KProblem
 #	Reevaluate individuals even if their evaluated flag has been set

@@ -23,6 +23,7 @@ public class KPStatistic extends SimpleStatistics implements SteadyStateStatisti
 //		super.postEvaluationStatistics(state);
 
 		// for now we just print the best fitness per subpopulation.
+
 		Individual[] best_i = new Individual[state.population.subpops.length];
 		Individual[] best_hits = new Individual[state.population.subpops.length];
 
@@ -45,7 +46,6 @@ public class KPStatistic extends SimpleStatistics implements SteadyStateStatisti
 					best_hits[x] = state.population.subpops[x].individuals[y];
 				}
 			}
-					
 
 			// now test to see if it's the new best_of_run
 			if (best_of_run[x] == null || best_i[x].fitness.betterThan(best_of_run[x].fitness))
@@ -74,6 +74,13 @@ public class KPStatistic extends SimpleStatistics implements SteadyStateStatisti
 							+ best_i[x].fitness.fitnessToStringForHumans());
 					state.output.message("Subpop " + x + " best hits of generation"
 							+ best_hits[x].fitness.fitnessToStringForHumans());
+
+					Random ran = new Random();
+					int range = (int) (list_individuals.length - list_individuals.length*0.9);
+					int random_range = (int) (ran.nextInt(range) + list_individuals.length*0.9);
+					for (int i = KProblem.survival_individuals + 1; i < list_individuals.length; i++) {
+						state.population.subpops[0].individuals[i] = list_individuals[random_range];
+					}
 				}
 
 			// describe the winner if there is a description

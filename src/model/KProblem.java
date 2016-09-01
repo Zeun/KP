@@ -7,7 +7,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
 import ec.*;
 import ec.gp.*;
 import ec.gp.koza.KozaFitness;
@@ -33,6 +32,7 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 	public static final double IND_MAX_NODES = 20.0;
 	public static int JOBS;
 	public static int SUBPOPS;
+
 	// NÚMERO DE GENERACIONES EN QUE SE HACE LA CROSS VALIDATION
 	public static int cross_validation_number = 99;
 	// NÚMERO DE INVIDIVUOS QUE SOBREVIVEN
@@ -111,7 +111,6 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 
 			// data.add(data_training);
 			// data.add(data_evaluation);
-
 			System.out.println("Lectura desde archivo terminada con Exito!");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -211,7 +210,7 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 			}
 			*/
 			instanceNumber = data_temp.size();
-			System.out.println(data_temp.size());
+
 			String output = "";
 			// El individuo es evaluado en cada una de las instancias
 			for (int i = 0; i < instanceNumber; i++) {
@@ -253,6 +252,7 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 					// Descomentar para ver circuito en pantalla
 					// System.out.println(auxData.printResult());
 				}
+
 				// Log de resultados por instancia
 				 output += (state.generation + ", ");
 				 output += ((timeEnd - timeInit) / 1000000 + ", ");
@@ -286,6 +286,7 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 			KozaFitness f = ((KozaFitness) gpind.fitness);
 
 			float fitness = (float) (0.90 * errRelativoPromedio + 0.05 * noHitsPromedio + 0.05 * errorRelativoTamañoArbol);
+
 			f.setStandardizedFitness(state, fitness);
 			f.hits = hits;
 			gpind.evaluated = false;
@@ -296,7 +297,9 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 	public void describe(final EvolutionState state, final Individual individual, final int subpopulation,
 			final int threadnum, final int log) {
 
+
 		endGenerationTime = System.nanoTime(); // fin cronometro evolución
+
 		String message_time = "Evolution duration: " + (endGenerationTime - startGenerationTime) / 1000000 + " ms";
 		state.output.message(message_time);
 		PrintWriter dataOutput = null;
@@ -337,6 +340,7 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 		System.out.println("estoy imprimiendo a los individuos en .dot del job: " + JOB_NUMBER + " de la poblacion "
 				+ subpopulation);
 		try {
+
 			FileIO.repairDot(JOB_NUMBER, JOBS, subpopulation, name);
 			FileIO.dot_a_png(JOB_NUMBER, subpopulation);
 		} catch (Exception e) {

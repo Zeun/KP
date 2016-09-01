@@ -76,6 +76,7 @@ public class FileIO {
 	public static void repairDot(int JOB_NUMBER, int JOBS, int subpopulation, String filename) throws IOException {
 		File file;
 		int jobs = JOBS;
+		System.out.println(jobs);
 		if (jobs == 1) {
 			file = new File("out/" + filename + "/evolution" + JOB_NUMBER + "/BestIndividual.dot");
 		} else {
@@ -102,7 +103,7 @@ public class FileIO {
 				
 			} else {
 				writeFile(buffer.toString(),
-						"out/results/evolution" + JOB_NUMBER + "/job"+ JOB_NUMBER + ".subpop" + subpopulation + ".BestIndividual.dot");
+						"out/" + filename +"/evolution" + JOB_NUMBER + "/job"+ JOB_NUMBER + ".subpop" + subpopulation + ".BestIndividual.dot");
 				buffer.setLength(0);
 				i = 1;
 				label = "";
@@ -127,14 +128,15 @@ public class FileIO {
 		fw.close();
 	}
 
-	public static void dot_a_png(int job_number, int subpopulation) {
+	public static void dot_a_png(int job_number, int subpopulation, String name) {
 		try {
 			System.out.println("[dot_a_png]");
 			String dotPath = "C:/Program Files (x86)/Graphviz2.38/bin/dot.exe";
-			String fileInputPath = "out/results/evolution" + job_number + "/job"+ job_number + ".subpop" + subpopulation + ".BestIndividual.dot";
-			String fileOutputPath = "out/results/evolution" + job_number + "/job"+ job_number + ".subpop" + subpopulation + ".BestIndividual.png";
+			
+			String fileInputPath = "out/" + name + "/evolution" + job_number + "/job"+ job_number + ".subpop" + subpopulation + ".BestIndividual.dot";
+			String fileOutputPath = "out/" + name + "/evolution" + job_number + "/job"+ job_number + ".subpop" + subpopulation + ".BestIndividual.png";
 			// System.out.println(dotPath);
-			// System.out.println(fileInputPath);
+			 System.out.println(fileInputPath);
 			// System.out.println(fileOutputPath);
 
 			Runtime rt = Runtime.getRuntime();

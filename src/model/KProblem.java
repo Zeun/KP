@@ -38,9 +38,9 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 	// NÚMERO DE INVIDIVUOS QUE SOBREVIVEN
 	public static int survival_individuals = 5;
 	// DIRECTORIO DONDE SE ENCUENTRAN LAS INSTANCIAS
-	public static String directory_data = "data/cross_validation_grupo_SS";
+	public static String directory_data = "data/cross_validation_grupo_NC/training";
 
-	ArrayList<KPData> data_temp;
+	ArrayList<KPData> data_training;
 	ArrayList<KPData> data_evaluation;
 	// ArrayList<ArrayList<KPData>> data;
 	Boolean flag = true;
@@ -70,7 +70,7 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 		// ec.util.Parameter("breed.elite.0"), null);
 		semillas = state.parameters.getString(new ec.util.Parameter("seed.0"), null);
 
-		data_temp = new ArrayList<KPData>();
+		data_training = new ArrayList<KPData>();
 		// data_evaluation = new ArrayList<KPData>();
 		// data = new ArrayList<ArrayList<KPData>>();
 		
@@ -96,18 +96,9 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 			// JOB_NUMBER + "/job." + JOB_NUMBER + ".BestIndividual.dot");
 			DOT_FILE = FileIO.newLog(state.output, "out/" + name + "/evolution" + JOB_NUMBER + "/BestIndividual.dot");
 			final File folder_data_training;
-			// Si tengo más de una población, uso 2 grupos de instancias
-//			if (SUBPOPS > 1) {
-//				folder_data_training = new File("data/Evol_isla1_GX");
-//				final File folder_data_evaluation = new File("data/Evol_isla2_GX");
-//				FileIO.readInstances(data_evaluation, folder_data_evaluation);
-				// data.add(data_evaluation);
-//			} else {
-				// folder_island1 = new File("data/Evaluación/Eval G15");
-				folder_data_training = new File(directory_data);
+			folder_data_training = new File(directory_data);
 
-//			}
-			FileIO.readInstances(data_temp, folder_data_training);
+			FileIO.readInstances(data_training, folder_data_training);
 
 			// data.add(data_training);
 			// data.add(data_evaluation);
@@ -136,79 +127,80 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 				errorRelativoTamañoArbol = Math.abs(IND_MAX_NODES - gpind.size()) / IND_MAX_NODES;
 			}
 
-			// ArrayList<KPData> data_temp = new ArrayList<KPData>();
+			 ArrayList<KPData> data_temp = new ArrayList<KPData>();
 
 			int contador2;
-			/*
-			if (state.generation == (state.numGenerations - 1)) {
-				data_temp = new ArrayList<KPData>();
-				final File folder_island2 = new File(directory_data + "/eval");
-				try {
-					FileIO.readInstances(data_temp, folder_island2);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				if (flag) {
-					flag = false;
-				}
-			} else {
-				if (state.generation % cross_validation_number == 0 && state.generation != 0) {
-					contador = ((((state.generation) / (cross_validation_number) % data_training.size()) - 1) * 10)
-							% data_training.size();
-					if ((data_training.size() * 0.9 + contador) == 100) {
-						contador2 = 100;
-					} else {
-						contador2 = (int) ((data_training.size() * 0.9 + contador) % data_training.size());
-					}
-					for (int i = 0; i < data_training.size(); i++) {
-						if (contador < contador2) {
-							if (i < contador || i >= contador2) {
-	
-								KPData kp = data_training.get(i);
-								data_temp.add(kp);
-							}
-						} else {
-							if (i < contador && i >= contador2) {
-	
-								KPData kp = data_training.get(i);
-								data_temp.add(kp);
-							}
-	
-						}
+			if (state.generation != 0) {
+				if (state.generation == (state.numGenerations - 1)) {
+					data_temp = new ArrayList<KPData>();
+					final File folder_island2 = new File(directory_data + "/eval");
+					try {
+						FileIO.readInstances(data_temp, folder_island2);
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
 					if (flag) {
-						System.out.println("Voy en el cross validation " + (state.generation) / (cross_validation_number));
-
 						flag = false;
 					}
 				} else {
-					contador = ((((state.generation) / (cross_validation_number) % data_training.size())) * 10)
-							% data_training.size();
-					if ((data_training.size() * 0.9 + contador) == 100) {
-						contador2 = 100;
-					} else {
-						contador2 = (int) ((data_training.size() * 0.9 + contador) % data_training.size());
-					}
-					for (int i = 0; i < data_training.size(); i++) {
-						if (contador < contador2) {
-							if (i >= contador && i < contador2) {
-								KPData kp = data_training.get(i);
-								data_temp.add(kp);
-							}
+					if (state.generation % cross_validation_number == 0 && state.generation != 0) {
+						contador = ((((state.generation) / (cross_validation_number) % data_training.size()) - 1) * 10)
+								% data_training.size();
+						if ((data_training.size() * 0.9 + contador) == 100) {
+							contador2 = 100;
 						} else {
-							if (i >= contador || i < contador2) {
-								KPData kp = data_training.get(i);
-								data_temp.add(kp);
-							}
-	
+							contador2 = (int) ((data_training.size() * 0.9 + contador) % data_training.size());
 						}
-					}
-					if (flag) {
-						flag = false;
+						for (int i = 0; i < data_training.size(); i++) {
+							if (contador < contador2) {
+								if (i < contador || i >= contador2) {
+		
+									KPData kp = data_training.get(i);
+									data_temp.add(kp);
+								}
+							} else {
+								if (i < contador && i >= contador2) {
+		
+									KPData kp = data_training.get(i);
+									data_temp.add(kp);
+								}
+		
+							}
+						}
+						if (flag) {
+							System.out.println("Voy en el cross validation " + (state.generation) / (cross_validation_number));
+	
+							flag = false;
+						}
+					} else {
+						contador = ((((state.generation) / (cross_validation_number) % data_training.size())) * 10)
+								% data_training.size();
+						if ((data_training.size() * 0.9 + contador) == 100) {
+							contador2 = 100;
+						} else {
+							contador2 = (int) ((data_training.size() * 0.9 + contador) % data_training.size());
+						}
+						for (int i = 0; i < data_training.size(); i++) {
+							if (contador < contador2) {
+								if (i >= contador && i < contador2) {
+									KPData kp = data_training.get(i);
+									data_temp.add(kp);
+								}
+							} else {
+								if (i >= contador || i < contador2) {
+									KPData kp = data_training.get(i);
+									data_temp.add(kp);
+								}
+		
+							}
+						}
+						if (flag) {
+							flag = false;
+						}
 					}
 				}
 			}
-			*/
+			
 			instanceNumber = data_temp.size();
 
 			String output = "";
@@ -342,7 +334,7 @@ public class KProblem extends GPProblem implements SimpleProblemForm {
 		try {
 
 			FileIO.repairDot(JOB_NUMBER, JOBS, subpopulation, name);
-			FileIO.dot_a_png(JOB_NUMBER, subpopulation);
+			FileIO.dot_a_png(JOB_NUMBER, subpopulation, name);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

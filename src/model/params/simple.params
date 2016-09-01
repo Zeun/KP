@@ -62,8 +62,8 @@ breed =					ec.simple.SimpleBreeder
 # We're using standard evaluation -- no coevolution
 eval =					ec.simple.SimpleEvaluator
 # We're using simple statistics
-# stat =					ec.simple.SimpleStatistics
-stat = model.KPStatistic
+ stat =					ec.simple.SimpleStatistics
+# stat = model.KPStatistic
 
 #	Jobs
 jobs = 1
@@ -101,7 +101,7 @@ breed.elite.0 = 			1
 # ec.SimpleStatistics
 # output statistics to the file "out.stat" in the directory
 # the run was started in
-stat.file				$out/Statistics.out
+# stat.file				$out/Statistics.out
 #stat.do-size = true
 #stat.do-time = true
 #stat.do-depth = true

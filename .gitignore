@@ -72,3 +72,4 @@ src/model/params/simple.params
 bin/model/params/simple.params
 *.rar
 *.params
+*.params

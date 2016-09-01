@@ -73,13 +73,13 @@ public class FileIO {
 
 	}
 
-	public static void repairDot(int JOB_NUMBER, int JOBS, int subpopulation) throws IOException {
+	public static void repairDot(int JOB_NUMBER, int JOBS, int subpopulation, String filename) throws IOException {
 		File file;
 		int jobs = JOBS;
 		if (jobs == 1) {
-			file = new File("out/results/evolution" + JOB_NUMBER + "/BestIndividual.dot");
+			file = new File("out/" + filename + "/evolution" + JOB_NUMBER + "/BestIndividual.dot");
 		} else {
-			file = new File("out/results/evolution" + JOB_NUMBER + "/job." + JOB_NUMBER + ".BestIndividual.dot");
+			file = new File("out/" + filename + "/evolution" + JOB_NUMBER + "/job." + JOB_NUMBER + ".BestIndividual.dot");
 		}
 		Scanner s = new Scanner(file);
 		StringBuilder buffer = new StringBuilder();
